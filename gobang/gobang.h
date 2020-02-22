@@ -5,15 +5,27 @@
 class Gobang
 {
 private:
-    int row_;
-    int column_;
-    const int kGridWidth = 40; //棋盘每个格子的大小
-    const int kClickPixel = 5; //鼠标点击点离棋盘交叉点的误差范围
+    int rows_;          //棋盘多少行
+    int columns_;       //棋盘多少列
+    bool current_turn_; //当前下的是黑子（false）还是白字（true）
+    bool is_initialized_;
+    bool is_ai_;
+
     int** positions_;
 
+    int WhoWin(int row, int column);
+    int InitGobang(int rows, int columns);
+
 public:
-    explicit Gobang(int row, int column);
+    explicit Gobang(int rows, int columns, bool is_ai);
     ~Gobang();
+
+    int MoveInChess(int row, int column);
+    int GetCurrentTurn();
+    bool GetMode();
+    int GetPositionValue(int row, int column);
+    int GetRectangle(int row, int column, int *rect);
+
 };
 
 #endif // GOBANG_H
