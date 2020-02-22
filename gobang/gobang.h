@@ -13,18 +13,19 @@ private:
 
     int** positions_;
 
-    int WhoWin(int row, int column);
+    int IsWin(int row, int column);
     int InitGobang(int rows, int columns);
+    int GetRectangle(int row, int column, int *rect);
 
 public:
     explicit Gobang(int rows, int columns, bool is_ai);
     ~Gobang();
 
-    int MoveInChess(int row, int column);
+    int PutPieceInChess(int row, int column);
     int GetCurrentTurn();
     bool GetMode();
     int GetPositionValue(int row, int column);
-    int GetRectangle(int row, int column, int *rect);
+
 
 };
 

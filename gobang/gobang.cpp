@@ -78,7 +78,7 @@ int Gobang::InitGobang(int rows, int columns)
  * 如果没有   ：返回0；
  * 如果有错误  ：返回负数；
 */
-int Gobang::WhoWin(int row, int column)
+int Gobang::IsWin(int row, int column)
 {
     int i; //行
     int j; //列
@@ -188,7 +188,7 @@ int Gobang::WhoWin(int row, int column)
 /*
  * 在棋盘当前位置下棋
 */
-int Gobang::MoveInChess(int row, int column)
+int Gobang::PutPieceInChess(int row, int column)
 {
     // 判断是否已经初始化了，如果没有初始化，返回-1
     if (!is_initialized_)
