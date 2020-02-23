@@ -37,4 +37,15 @@
 # Qt 
 *.pro.user
 build*/
+# Qt using VisualStudio
+*.vcxproj
+*.vcxproj.*
+*.qmake.*
+*.sln
+ui_*.h
+.vs/
+debug/
+release/
+x64/
+
 

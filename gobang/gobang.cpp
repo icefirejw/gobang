@@ -1,8 +1,12 @@
-#include <iostream>
 #include "gobang.h"
+
+#ifdef DEBUG_GOBANG
+#include <QDebug>
+#endif
 
 Gobang::Gobang(int rows, int columns, bool is_ai)
 {
+    int ret = 0;
     // 是人机对战，还是人人对战
     is_ai_ = is_ai;
 
@@ -10,13 +14,17 @@ Gobang::Gobang(int rows, int columns, bool is_ai)
     positions_ = nullptr;
     rows_ = 0;
     columns_ = 0;
-    InitGobang(rows, columns);
 
+    ret = InitGobang(rows, columns);
+    if (ret < 0){
+        BangDebug("Initialized error: %d \n", ret);
+    }
     if(is_ai){
         // 如果人机对战需要初始化ai系统
 
     }
 
+    BangDebug("GoBang Created");
 
 }
 
@@ -28,10 +36,13 @@ Gobang::~Gobang()
         return;
     }
 
-    for(i =0; i<rows_; i++){
+    for(i=0; i<rows_; i++){
         if (nullptr != positions_[i])
-            free(positions_[i]);
+            delete[] positions_[i];
     }
+    if (nullptr != positions_)
+        delete[] positions_;
+
     rows_ = 0;
     columns_ = 0;
 }
@@ -49,13 +60,14 @@ int Gobang::InitGobang(int rows, int columns)
     current_turn_ = false; // 初始化黑子开始
 
     // 初始化棋局，分配落子位置数组，并初始化
+
     if (nullptr == positions_){
-        *positions_ = new int(rows);
+        positions_ = new int*[rows];
         if (nullptr == *positions_)
             return -1;
 
         for(i =0; i<rows; i++){
-            positions_[i] = new int(columns);
+            positions_[i] = new int[columns];
             if (nullptr == positions_[i])
                 return -2;
         }
@@ -191,12 +203,15 @@ int Gobang::IsWin(int row, int column)
 int Gobang::PutPieceInChess(int row, int column)
 {
     // 判断是否已经初始化了，如果没有初始化，返回-1
-    if (!is_initialized_)
+    if (!is_initialized_){
+        BangDebug("PutPieceInChess: the chess is not initialized\n");
         return -1;
-
+    }
     // 判断这个地方是否有落子（值为0），如有已经有落子了则不能再下棋
-    if (GetPositionValue(row, column) != 0)
+    if (GetPositionValue(row, column) != 0){
+        BangDebug("The value is %d\n", GetPositionValue(row, column));
         return -2;
+    }
 
     // 判断当前的落子方，如果是黑子，则需要将当前位置的值设置为-1
     // 否则将当前位置的值设置为1
@@ -210,6 +225,9 @@ int Gobang::PutPieceInChess(int row, int column)
     //改变落子方为对方
     current_turn_ = !current_turn_;
 
+#ifdef DEBUG_GOBANG
+    PrintBang();
+#endif
     return 0;
 
 }
@@ -305,4 +323,45 @@ int Gobang::GetRectangle(int row, int column, int* rect)
 
     return 0;
 
+}
+
+void Gobang::PrintBang()
+{
+    char buf[1000] = {0};
+
+    BangDebug("=========================\n");
+    for (int i=0; i<rows_; i++) {
+        int cnt = 0;
+        for (int j=0; j<columns_ && cnt<1000; j++) {
+            int pos = positions_[i][j];
+            if (pos == 1) { //白旗
+                buf[cnt++] = 'x';
+            }
+            else if (pos == -1) {//黑旗
+                buf[cnt++] = '*';
+            }
+            else {
+                buf[cnt++] = '0';
+            }
+            if (cnt >= 1000)
+                break;
+        }
+        BangDebug(buf);
+    }
+
+}
+
+void Gobang::BangDebug(const char* output,...)
+{
+#ifdef DEBUG_GOBANG
+
+    char buf[4096]={0};
+    va_list vlArgs;
+    va_start(vlArgs, output);
+
+    _vsnprintf_s(buf, sizeof(buf)-1, output, vlArgs);
+
+    qDebug()<< buf;
+
+#endif
 }

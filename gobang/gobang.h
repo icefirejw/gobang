@@ -1,6 +1,7 @@
 #ifndef GOBANG_H
 #define GOBANG_H
 
+#define DEBUG_GOBANG
 
 class Gobang
 {
@@ -16,6 +17,8 @@ private:
     int IsWin(int row, int column);
     int InitGobang(int rows, int columns);
     int GetRectangle(int row, int column, int *rect);
+    void PrintBang();
+    void BangDebug(const char* output,...);
 
 public:
     explicit Gobang(int rows, int columns, bool is_ai);
